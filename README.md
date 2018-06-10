@@ -1,4 +1,4 @@
-teavana-go
+go
 ======
 
 A collections of Go packages.
