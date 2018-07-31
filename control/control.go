@@ -2,6 +2,7 @@ package control
 
 import (
 	"context"
+	"log"
 	"time"
 )
 
@@ -32,8 +33,14 @@ func Try(n int, trial func() error) (err error) {
 }
 
 func Periodic(d time.Duration, f func()) {
+	log.Printf("please use Periodically instead")
+	Periodically(d, f)
+}
+
+// Periodically run a function periodically at given period
+func Periodically(period time.Duration, f func()) {
 	f()
-	for _ = range time.Tick(d) {
+	for range time.Tick(period) {
 		f()
 	}
 }
