@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-const timeout = 1 * time.Second
-
 // Probe is an HTTP probe
 type Probe struct {
 	url    string
@@ -19,7 +17,7 @@ type Probe struct {
 }
 
 // New create a new Probe with default settings
-func New(target string) (*Probe, error) {
+func New(target string, timeout time.Duration) (*Probe, error) {
 	req, err := http.NewRequest("GET", target, nil)
 	if err != nil {
 		return nil, err

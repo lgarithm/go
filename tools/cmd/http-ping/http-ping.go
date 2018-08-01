@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	period = flag.Duration("period", 5*time.Second, "")
+	period  = flag.Duration("period", 5*time.Second, "")
+	timeout = flag.Duration("timeout", 5*time.Second, "")
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	}
 	var ps []*probe.Probe
 	for _, url := range urls {
-		p, err := probe.New(url)
+		p, err := probe.New(url, *timeout)
 		if err != nil {
 			log.Printf("invalid URL %s: %v", url, err)
 			continue
