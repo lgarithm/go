@@ -19,6 +19,7 @@ func main() {
 		`http://www.qq.com`,
 		`http://www.baidu.com`,
 		`https://github.com/`,
+		`https://www.bing.com/`,
 	}
 	var ps []*probe.Probe
 	for _, url := range urls {

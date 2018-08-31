@@ -7,8 +7,12 @@ import (
 	"log"
 )
 
-// StreamPipe redirects r to ws
-func StreamPipe(r io.Reader, ws ...io.Writer) error {
+// StreamPipe redirects r to ws.StreamPipe
+// Deprecated, use Tee instead.
+var StreamPipe = Tee
+
+// Tee redirects r to ws
+func Tee(r io.Reader, ws ...io.Writer) error {
 	reader := bufio.NewReader(r)
 	for {
 		line, _, err := reader.ReadLine()
