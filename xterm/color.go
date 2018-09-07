@@ -5,6 +5,11 @@ import (
 	"fmt"
 )
 
+type Color interface {
+	B(text string) []byte
+	S(text string) string
+}
+
 type color struct {
 	f uint8
 	b uint8
@@ -12,8 +17,9 @@ type color struct {
 
 // Standard XTerm Colors
 var (
-	Green = color{f: 32, b: 1}
-	Red   = color{f: 35, b: 1}
+	Red    = color{f: 35, b: 1}
+	Green  = color{f: 32, b: 1}
+	Yellow = color{f: 33, b: 1}
 )
 
 func (c color) bs(text string) *bytes.Buffer {
