@@ -16,9 +16,10 @@ const (
 )
 
 var (
-	ok   = xterm.Green
-	warn = xterm.Yellow
-	fail = xterm.Red
+	ok      = xterm.Green
+	warn    = xterm.Yellow
+	fail    = xterm.Red
+	ignored = xterm.Grey
 )
 
 // Interval represent a time period
@@ -48,6 +49,8 @@ func (i Interval) Show() string {
 // Highlight converts an Interval to human readable string with color thresholds
 func (i Interval) Highlight(t1, t2 time.Duration) (string, xterm.Color) {
 	switch {
+	case i.Begin == time.Time{}:
+		return "-", ignored
 	case i.Begin.After(i.End):
 		return "timeout", fail
 	case i.LonggerThan(t2):
@@ -61,9 +64,10 @@ func (i Interval) Highlight(t1, t2 time.Duration) (string, xterm.Color) {
 
 // Result is a collection of metrics
 type Result struct {
-	DNSInterval  Interval
-	DialInterval Interval
-	RWInterval   Interval
+	DNSInterval     Interval
+	DialInterval    Interval
+	DialTLSInterval Interval
+	RWInterval      Interval
 
 	RecvErr   error
 	RecvBytes int
@@ -76,7 +80,7 @@ func (r Result) RecvRate() float64 {
 
 func (r Result) String() string {
 	align := func(s string, c xterm.Color) string {
-		const fullPad = "                "
+		const fullPad = "              "
 		pad := ""
 		if l := utf8.RuneCountInString(s); l < len(fullPad) {
 			pad = fullPad[:len(fullPad)-l]
@@ -85,14 +89,11 @@ func (r Result) String() string {
 	}
 	columns := []string{
 		fmt.Sprintf("[%s]", r.icron()),
-		"dns latency:",
-		align(r.DNSInterval.Highlight(5*time.Millisecond, 10*time.Second)),
-		"dial latency:",
-		align(r.DialInterval.Highlight(10*time.Millisecond, 100*time.Second)),
-		"rw latency:",
-		align(r.RWInterval.Highlight(100*time.Millisecond, 1*time.Second)),
-		"speed:",
-		fmt.Sprintf("%-20s", showSpeed(r.RecvRate())),
+		"dns:", align(r.DNSInterval.Highlight(5*time.Millisecond, 10*time.Second)), " | ",
+		"dial:", align(r.DialInterval.Highlight(10*time.Millisecond, 100*time.Second)), " | ",
+		"dial tls: ", align(r.DialTLSInterval.Highlight(50*time.Millisecond, 150*time.Second)), " | ",
+		"rw:", align(r.RWInterval.Highlight(100*time.Millisecond, 1*time.Second)), " | ",
+		"speed:", fmt.Sprintf("%-20s", showSpeed(r.RecvRate())),
 	}
 	return strings.Join(columns, " ")
 }

@@ -17,9 +17,12 @@ type color struct {
 
 // Standard XTerm Colors
 var (
-	Red    = color{f: 35, b: 1}
-	Green  = color{f: 32, b: 1}
-	Yellow = color{f: 33, b: 1}
+	Green     = color{f: 32, b: 1}
+	Yellow    = color{f: 33, b: 1}
+	Blue      = color{f: 34, b: 1}
+	Red       = color{f: 35, b: 1}
+	LightBlue = color{f: 36, b: 1}
+	Grey      = color{f: 37, b: 1}
 )
 
 func (c color) bs(text string) *bytes.Buffer {

@@ -1,6 +1,7 @@
 package probe
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -43,8 +44,9 @@ func (p *Probe) Ping() {
 
 func (p *Probe) ping() Result {
 	var (
-		dns  Interval
-		dial Interval
+		dns     Interval
+		dial    Interval
+		dialTLS Interval
 	)
 	// TODO: check event order
 	trace := &httptrace.ClientTrace{
@@ -59,6 +61,12 @@ func (p *Probe) ping() Result {
 		},
 		ConnectDone: func(network, addr string, err error) {
 			dial.End = time.Now()
+		},
+		TLSHandshakeStart: func() {
+			dialTLS.Begin = time.Now()
+		},
+		TLSHandshakeDone: func(tls.ConnectionState, error) {
+			dialTLS.End = time.Now()
 		},
 	}
 	req := p.req.WithContext(httptrace.WithClientTrace(p.req.Context(), trace))
@@ -81,9 +89,10 @@ func (p *Probe) ping() Result {
 	// FIXME: clean DNS cache
 	p.tr.CloseIdleConnections()
 	return Result{
-		DNSInterval:  dns,
-		DialInterval: dial,
-		RWInterval:   rw,
+		DNSInterval:     dns,
+		DialInterval:    dial,
+		DialTLSInterval: dialTLS,
+		RWInterval:      rw,
 
 		RecvErr:   recvErr,
 		RecvBytes: recvBytes,
