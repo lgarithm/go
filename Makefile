@@ -1,4 +1,4 @@
-.PHONY: tools
+.PHONY: tools test
 
 CMDS = \
 	./tools/cmd/... \
@@ -15,3 +15,6 @@ install:
 
 clean:
 	go clean -cache
+
+test:
+	go test -v ./...

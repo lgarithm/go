@@ -39,5 +39,5 @@ func NewLogWriter(name string) io.Writer {
 
 func LogStream(name string, r io.Reader) error {
 	w := NewLogWriter(name)
-	return StreamPipe(r, w)
+	return Tee(r, w)
 }
