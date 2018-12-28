@@ -148,6 +148,43 @@ func (c *Client) Stream(cmd string) error {
 	return session.Wait()
 }
 
+type Watcher func(r io.Reader)
+
+func (c *Client) Watch(ctx context.Context, cmd string, outWatcher, errWatcher Watcher) error {
+	session, err := c.client.NewSession()
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+	if stdout, err := session.StdoutPipe(); err == nil {
+		if outWatcher != nil {
+			go outWatcher(stdout)
+		}
+	} else {
+		return err
+	}
+	if stderr, err := session.StderrPipe(); err == nil {
+		if errWatcher != nil {
+			go errWatcher(stderr)
+		}
+	} else {
+		return err
+	}
+	if err := session.Start(cmd); err != nil {
+		return err
+	}
+	done := make(chan error)
+	go func() {
+		done <- session.Wait()
+	}()
+	select {
+	case err := <-done:
+		return err
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
 func defaultKeyFile() (ssh.Signer, error) {
 	usr, _ := user.Current()
 	file := path.Join(usr.HomeDir, ".ssh", "id_rsa")
