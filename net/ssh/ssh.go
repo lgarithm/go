@@ -37,7 +37,24 @@ func withDefaultPort(host string) string {
 	return net.JoinHostPort(host, defaultPort)
 }
 
+func withDefaultUser(name string) string {
+	if len(name) == 0 {
+		if u, err := user.Current(); err == nil {
+			return u.Username
+		}
+	}
+	return name
+}
+
+func completeConfig(config Config) Config {
+	return Config{
+		User: withDefaultUser(config.User),
+		Host: withDefaultPort(config.Host),
+	}
+}
+
 func newSSHClient(config Config) (*ssh.Client, error) {
+	config = completeConfig(config)
 	key, err := defaultKeyFile()
 	if err != nil {
 		return nil, errors.New("failed to get key")
@@ -50,7 +67,7 @@ func newSSHClient(config Config) (*ssh.Client, error) {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		Timeout:         defaultTimeout,
 	}
-	client, err := ssh.Dial("tcp", withDefaultPort(config.Host), clientConfig)
+	client, err := ssh.Dial("tcp", config.Host, clientConfig)
 	if err != nil {
 		return nil, err
 	}
