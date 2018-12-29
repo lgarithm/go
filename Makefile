@@ -3,7 +3,8 @@
 CMDS = \
 	./tools/cmd/... \
 	./rtd/cmd/... \
-	./travisci/cmd/...
+	./travisci/cmd/... \
+	./github/cmd/...
 
 tools:
 	go version
