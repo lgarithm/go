@@ -27,7 +27,7 @@ func main() {
 		}
 	}
 	if len(*content) > 0 {
-		files[""] = *content
+		files[*name] = *content
 	}
 	if len(files) <= 0 {
 		fmt.Printf("No Files nor Content!\n")
