@@ -72,3 +72,22 @@ func (c SimpleClient) CreateGist(desc string, files map[string]string) error {
 	}
 	return nil
 }
+
+func (c SimpleClient) ListGist() ([]Gist, error) {
+	u := c.endpoint
+	u.Path = "/gists"
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var gs []Gist
+	if err := json.NewDecoder(resp.Body).Decode(&gs); err != nil {
+		return nil, err
+	}
+	return gs, nil
+}
