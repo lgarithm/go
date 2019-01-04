@@ -4,7 +4,8 @@ CMDS = \
 	./tools/cmd/... \
 	./rtd/cmd/... \
 	./travisci/cmd/... \
-	./github/cmd/...
+	./github/cmd/... \
+	./git/cmd/...
 
 tools:
 	go version
