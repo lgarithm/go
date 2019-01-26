@@ -1,7 +1,9 @@
 package profile
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"time"
 )
 
@@ -18,6 +20,7 @@ type profiler struct {
 }
 
 func Profile(name string) *profiler {
+	fmt.Fprintf(os.Stderr, "deprecated, please use simpleProfiler instead.\n")
 	p := profiler{
 		name:  name,
 		start: time.Now(),
