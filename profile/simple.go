@@ -9,6 +9,8 @@ import (
 )
 
 type simpleScope struct {
+	Scope
+
 	name     string
 	start    time.Time
 	profiler *simpleProfiler
@@ -16,6 +18,7 @@ type simpleScope struct {
 
 type simpleProfiler struct {
 	sync.Mutex
+
 	counts         map[string]int64
 	minDurations   map[string]time.Duration
 	maxDurations   map[string]time.Duration
@@ -34,6 +37,7 @@ func NewSimpleProfiler() Profiler {
 		totalDurations: make(map[string]time.Duration),
 	}
 }
+
 func (p *simpleProfiler) Profile(name string) Scope {
 	return &simpleScope{
 		name:     name,

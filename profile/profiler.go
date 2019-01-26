@@ -3,6 +3,7 @@ package profile
 import "io"
 
 type Scope interface {
+	WithAmount(int64) Scope
 	Done()
 }
 

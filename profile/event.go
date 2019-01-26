@@ -14,6 +14,8 @@ type event struct {
 }
 
 type eventScope struct {
+	Scope
+
 	name     string
 	start    time.Time
 	profiler *eventProfiler
@@ -25,6 +27,7 @@ func (s *eventScope) Done() {
 
 type eventProfiler struct {
 	sync.Mutex
+
 	events []event
 }
 
