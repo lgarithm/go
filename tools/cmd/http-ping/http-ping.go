@@ -15,7 +15,8 @@ import (
 )
 
 var (
-	defaultConfig = path.Join(os.Getenv("HOME"), ".http-ping")
+	home, _       = os.UserHomeDir()
+	defaultConfig = path.Join(home, ".http-ping")
 
 	period  = flag.Duration("period", 1*time.Second, "")
 	timeout = flag.Duration("timeout", 5*time.Second, "")
