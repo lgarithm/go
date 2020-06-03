@@ -115,5 +115,12 @@ func (r Result) icron() string {
 }
 
 func showSpeed(rate float64) string {
-	return fmt.Sprintf("%f KiB/s", rate/Ki)
+	switch {
+	case rate < float64(Ki):
+		return fmt.Sprintf("%.2f B/s", rate)
+	case rate < float64(Mi):
+		return fmt.Sprintf("%.2f KiB/s", rate/Ki)
+	default:
+		return fmt.Sprintf("%.2f MiB/s", rate/Mi)
+	}
 }
