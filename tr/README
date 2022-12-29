@@ -1,0 +1,10 @@
+
+...
+
+e.g.
+```
+func f() {
+	defer tr.Patient(`main`, *patient).Done()
+	time.Sleep(10 * time.Second)
+}
+```
