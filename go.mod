@@ -1,8 +1,6 @@
 module github.com/lgarithm/go
 
-go 1.21
-
-toolchain go1.24.1
+go 1.18
 
 require github.com/NVIDIA/go-dcgm v0.0.0-20250304171100-5f1fc9afaa31
 
