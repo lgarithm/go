@@ -11,14 +11,18 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/lgarithm/go/monitoring"
 )
 
+var (
+	period = flag.Duration(`p`, 100*time.Millisecond, `monitoring period`)
+)
+
 func main() {
 	flag.Parse()
-
-	m := monitoring.NewMonitor()
+	m := monitoring.NewMonitor(*period)
 	m.Start()
 	defer m.Stop()
 

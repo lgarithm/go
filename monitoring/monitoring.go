@@ -16,7 +16,7 @@ type Monitor struct {
 	finished []chan bool
 	csvFile  []*os.File
 	fields   []dcgm.Short
-	period   time.Duration
+	Period   time.Duration
 }
 
 var defaultFields = []dcgm.Short{
@@ -27,10 +27,10 @@ var defaultFields = []dcgm.Short{
 	dcgm.DCGM_FI_PROF_DRAM_ACTIVE,
 }
 
-func NewMonitor() *Monitor {
+func NewMonitor(period time.Duration) *Monitor {
 	return &Monitor{
 		fields: defaultFields,
-		period: 100 * time.Millisecond,
+		Period: period,
 	}
 }
 
@@ -167,6 +167,6 @@ func (m *Monitor) MonitorSMACT(gpu uint) {
 				log.Panicln(err)
 			}
 		}
-		time.Sleep(m.period)
+		time.Sleep(m.Period)
 	}
 }
