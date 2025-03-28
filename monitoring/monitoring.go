@@ -106,8 +106,7 @@ func (m *Monitor) Start() {
 		log.Panicln(err)
 	}
 
-	dcgm.WatchFieldsWithGroupEx(fieldsGroup, group, 1000, 1, 1)
-	if err != nil {
+	if err := dcgm.WatchFieldsWithGroupEx(fieldsGroup, group, 1000, 1, 1); err != nil {
 		log.Panicln(err)
 	}
 
