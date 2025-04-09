@@ -17,6 +17,7 @@ type Monitor struct {
 	csvFile  []*os.File
 	fields   []dcgm.Short
 	Period   time.Duration
+	LogDir   string
 }
 
 var defaultFields = []dcgm.Short{
@@ -31,21 +32,20 @@ func NewMonitor(period time.Duration) *Monitor {
 	return &Monitor{
 		fields: defaultFields,
 		Period: period,
+		LogDir: `.`,
 	}
 }
 
-func outfile(i uint) string {
-	dir := `log`
-	os.MkdirAll(dir, os.ModePerm)
-	return fmt.Sprintf("%s/monitoring_%d.csv", dir, i)
+func (m *Monitor) outfile(i uint) string {
+	os.MkdirAll(m.LogDir, os.ModePerm)
+	return fmt.Sprintf("%s/monitoring_%d.csv", m.LogDir, i)
 }
 
 func (m *Monitor) createCSV() {
 	m.csvFile = make([]*os.File, len(m.gpus))
-
 	for _, gpu := range m.gpus {
 		// Create a new file and write the header
-		file, err := os.Create(outfile(gpu))
+		file, err := os.Create(m.outfile(gpu))
 		if err != nil {
 			log.Panicln(err)
 		}
@@ -94,7 +94,7 @@ func (m *Monitor) Start() {
 	if err != nil {
 		log.Panicln(err)
 	}
-	log.Printf("GPUs: %q", m.gpus)
+
 	const fieldGroupName = "PROF_ACTIVE"
 	fieldsGroup, err := dcgm.FieldGroupCreate(fieldGroupName, m.fields)
 	if err != nil {
@@ -121,7 +121,6 @@ func (m *Monitor) Start() {
 	m.createCSV()
 
 	for _, gpu := range m.gpus {
-		gpu := gpu
 		go m.MonitorSMACT(gpu)
 	}
 }
@@ -155,12 +154,6 @@ func (m *Monitor) MonitorSMACT(gpu uint) {
 			dram := values[4].Float64()
 			t := time.Now().UnixNano()
 			s := fmt.Sprintf("%d,%d,%f,%f,%f,%f,%f\n", gpu, t, gr, sm, occ, pipe, dram)
-			fmt.Fprint(os.Stderr, s)
-			if gr != 0 || sm != 0 || occ != 0 || pipe != 0 || dram != 0 {
-				// fmt.Fprint(os.Stderr, s)
-			} else {
-				// fmt.Fprintf(os.Stderr, "all zero!\n")
-			}
 			_, err = m.csvFile[gpu].WriteString(s)
 			if err != nil {
 				log.Panicln(err)

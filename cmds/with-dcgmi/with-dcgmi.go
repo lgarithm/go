@@ -18,11 +18,13 @@ import (
 
 var (
 	period = flag.Duration(`p`, 100*time.Millisecond, `monitoring period`)
+	logDir = flag.String(`logdir`, `logs`, `log dir`)
 )
 
 func main() {
 	flag.Parse()
 	m := monitoring.NewMonitor(*period)
+	m.LogDir = *logDir
 	m.Start()
 	defer m.Stop()
 
